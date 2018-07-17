@@ -283,26 +283,26 @@ public class SpringApplication {
 	 * @return a running {@link ApplicationContext}
 	 */
 	public ConfigurableApplicationContext run(String... args) {
-		StopWatch stopWatch = new StopWatch();
+		StopWatch stopWatch = new StopWatch();  //StopWatch记录运行时间
 		stopWatch.start();
 		ConfigurableApplicationContext context = null;
 		FailureAnalyzers analyzers = null;
 		configureHeadlessProperty();
 		SpringApplicationRunListeners listeners = getRunListeners(args);
-		listeners.starting();
+		listeners.starting();  //listeners会触发一个ApplicationStartingEvent事件
 		try {
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(
 					args);
 			ConfigurableEnvironment environment = prepareEnvironment(listeners,
-					applicationArguments);
+					applicationArguments);  //listeners会触发一个ApplicationPreparedEvent事件
 			Banner printedBanner = printBanner(environment);
 			context = createApplicationContext();
 			analyzers = new FailureAnalyzers(context);
 			prepareContext(context, environment, listeners, applicationArguments,
-					printedBanner);
+					printedBanner);  //listeners会触发一个ApplicationPreparedEvent事件
 			refreshContext(context);
 			afterRefresh(context, applicationArguments);
-			listeners.finished(context, null);
+			listeners.finished(context, null);  //listeners会触发一个ApplicationReadyEvent事件
 			stopWatch.stop();
 			if (this.logStartupInfo) {
 				new StartupInfoLogger(this.mainApplicationClass)
@@ -311,7 +311,7 @@ public class SpringApplication {
 			return context;
 		}
 		catch (Throwable ex) {
-			handleRunFailure(context, listeners, analyzers, ex);
+			handleRunFailure(context, listeners, analyzers, ex); //listeners会触发一个ApplicationFailedEvent事件
 			throw new IllegalStateException(ex);
 		}
 	}
